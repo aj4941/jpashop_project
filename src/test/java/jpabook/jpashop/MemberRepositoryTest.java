@@ -1,16 +1,14 @@
 package jpabook.jpashop;
 
-import org.assertj.core.api.Assertions;
+import jpabook.jpashop.domain.Member;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class) // 스프링과 관련한 테스트를 진행 (이걸 안적으면 너무 많은 기능을 가져와서 무거워짐)
 @SpringBootTest
