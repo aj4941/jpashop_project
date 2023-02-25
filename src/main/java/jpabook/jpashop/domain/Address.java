@@ -12,7 +12,7 @@ public class Address {
     private String street;
     private String zipcode;
 
-    protected Address() { }
+    protected Address() { } // 자식 클래스가 아니고 다른 패키지라면 접근 불가
 
     public Address(String city, String street, String zipcode) {
         this.city = city;

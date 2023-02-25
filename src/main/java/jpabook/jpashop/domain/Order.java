@@ -17,20 +17,19 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) // Many를 조회할 때 One이 지연로딩
     @JoinColumn(name = "member_id")
     private Member member;
-
-    @OneToMany(mappedBy = "order")
-    private List<OrderItem> orderItems = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "delivery_id") // FK
     private Delivery delivery;
 
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderItems = new ArrayList<>();
+
     private LocalDateTime orderDate;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문 상태 [Order, Cancel]
-
 }
