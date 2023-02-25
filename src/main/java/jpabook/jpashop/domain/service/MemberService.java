@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @Transactional // JPA의 데이터 변경, 조회는 트랜잭션 안에서 실행되어야 함 (이게 있어야 지연로딩 등이 가능)
-@AllArgsConstructor // 모든 필드를 담은 생성자를 만들어줌
+// @AllArgsConstructor : 모든 필드를 담은 생성자를 만들어줌
 @RequiredArgsConstructor // final이 붙은 필드를 담은 생성자를 만들어줌
 public class MemberService {
 

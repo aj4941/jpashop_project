@@ -15,8 +15,9 @@ public class MemberRepository {
     // @PersistenceContext (@Autowired도 가능)
     private final EntityManager em;
 
-    public void save(Member member) {
+    public Long save(Member member) {
         em.persist(member);
+        return member.getId();
         // JPA에서 em.persist를 하면 그 순간에 영속성 컨텍스트에서 key 값을 member의 id로 인식
         // 따라서 save(member) 후에 member.getId()를 하더라도 값이 있음이 보장됨
     }
