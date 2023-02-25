@@ -2,7 +2,6 @@ package jpabook.jpashop.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.criterion.Order;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ public class Member {
 
     private String name;
 
-    @Embedded
+    @Embedded // @Embedded, @Embeddable 둘 중 하나만 있어도 되지만 관례상 둘 다 사용함
     private Address address;
 
     @OneToMany(mappedBy = "member")
