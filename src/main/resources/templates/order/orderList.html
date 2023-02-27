@@ -47,6 +47,7 @@
              th:href="'javascript:cancel('+${item.id}+')'"
              class="btn btn-danger">CANCEL</a>
         </td>
+         <!-- 'ORDER' 상태인 경우 취소 버튼이 나오도록 함    -->
       </tr>
       </tbody>
     </table>
@@ -54,6 +55,7 @@
   <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
 </body>
+<!-- id가 매개변수로 들어갈 경우 form을 만들어서 post 방식과 주소는 /orders/id/cancel로 진행 -->
 <script>
   function cancel(id) {
   var form = document.createElement("form");
@@ -61,6 +63,6 @@
   form.setAttribute("action", "/orders/" + id + "/cancel");
   document.body.appendChild(form);
   form.submit();
- }
+}
 </script>
 </html>
