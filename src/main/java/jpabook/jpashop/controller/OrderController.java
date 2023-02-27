@@ -2,13 +2,16 @@ package jpabook.jpashop.controller;
 
 import jpabook.jpashop.domain.Item;
 import jpabook.jpashop.domain.Member;
-import jpabook.jpashop.domain.service.ItemService;
-import jpabook.jpashop.domain.service.MemberService;
-import jpabook.jpashop.domain.service.OrderService;
+import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderSearch;
+import jpabook.jpashop.service.ItemService;
+import jpabook.jpashop.service.MemberService;
+import jpabook.jpashop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -33,11 +36,23 @@ public class OrderController {
         return "order/orderForm";
     }
 
+    // 주문 생성
     @PostMapping("/order") // form에서 value 값이 requestparam에 들어감
     public String order(@RequestParam("memberId") Long memberId,
                         @RequestParam("itemId") Long itemId,
                         @RequestParam("count") int count) {
         orderService.order(memberId, itemId, count);
         return "redirect:/orders";
+    }
+
+    // 주문 조회
+    @GetMapping("/orders")
+    public String orderList(@ModelAttribute("OrderSearch") OrderSearch orderSearch,
+                            Model model) {
+
+        List<Order> orders = orderService.findOrders(orderSearch);
+        model.addAttribute("orders", orders);
+
+        return "order/orderList";
     }
 }
