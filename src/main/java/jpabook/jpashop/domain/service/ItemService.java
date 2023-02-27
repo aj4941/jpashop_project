@@ -1,6 +1,7 @@
 package jpabook.jpashop.domain.service;
 
 import jpabook.jpashop.domain.Item;
+import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,15 @@ public class ItemService {
         itemRepository.save(item);
     }
 
+    @Transactional
+    public void updateItem(Long itemId, String name, int price, int stockQuantity) {
+        Item findItem = itemRepository.findOne(itemId); // 영속 상태 item 객체
+        findItem.setName(name);
+        findItem.setPrice(price);
+        findItem.setStockQuantity(stockQuantity);
+        // 영속 상태이므로 더티 체킹이 적용되기 때문에 itemRepository.save를 할 필요가 없음
+        // commit -> flush(영속성 컨텍스트 변경 내용을 update)
+    }
     public List<Item> findItems() {
         return itemRepository.findAll();
     }
