@@ -46,3 +46,12 @@ model.addAttribute("key", value) 에서 key 값을 쓰게 된다
 2. th:field는 id, name, value 값을 채워주는 역할을 한다.
 id, name은 객체의 필드명과 일치하게 생성되며 value는 model.addAttribute에서 들어온 값이 적용된다.
 -->
+
+<!--
+3. #fields.hasErrors : 'name'에 에러가 있으면 form-control에 fieldError를 추가로 적용한 것이다.
+실제 <style>에 .fieldError가 테두리에 적용되는 것이므로 에러가 발생하면 붉은 색 테두리로 변한 것이다.
+-->
+
+<!--
+4. th:errors="*{name}"에서 에러가 발생하면 name 필드에 대한 에러 메시지를 적용한다.
+-->

@@ -30,7 +30,9 @@ public class MemberController {
     public String create(@Valid MemberForm form, BindingResult result) {
 
         if (result.hasErrors()) {
-            return "members/createMemberForm"; // 오류가 발생하면 다시 로그인 창으로 이동
+            return "members/createMemberForm";
+            // 오류가 발생하면 다시 로그인 창으로 이동
+            // @NotEmpty(message = "회원 이름은 필수입니다.")가 적용되어 빨간 테두리에 글씨가 나올 것임
         }
         Address address = new Address(form.getCity(), form.getStreet(), form.getZipcode());
         Member member = new Member();
