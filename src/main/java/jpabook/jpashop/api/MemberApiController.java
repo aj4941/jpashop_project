@@ -8,12 +8,46 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class MemberApiController {
 
     private final MemberService memberService;
+
+    // 엔티티 값을 그대로 전달
+    // 회원과 관련된 API는 여러가지일 것이고 어느 API는 orders가 필요없고 어디서는 address가 필요없고...
+    // -> 엔티티를 전달하면 이런 부분에서 혼란이 옴
+    // 만약 name 필드가 username으로 바뀌면 API 스펙이 바뀌어버림
+    // 엔티티가 화면을 뿌리는 로직에 들어옴 -> 엔티티에 프레젠테이션 계층이 추가된 것임 -> 수정할 때 어려움을 겪음
+    @GetMapping("/api/v1/members")
+    public List<Member> memberV1() {
+        return memberService.findMembers();
+    }
+
+    // 엔티티 대신 dto를 만들어서 전송하면 원하는 값만 선택적으로 전송할 수 있음
+    @GetMapping("/api/v2/members")
+    public Result memberV2() {
+        List<Member> findMembers = memberService.findMembers();
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());// List<MemberDto>
+        return new Result(collect);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private T data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
+    }
 
     // 엔티티는 필드 값이 바뀔 수가 있는데 이로 인해서 RequestBody 시에 API 오류가 발생할 수 있다.
     // 따라서 dto 객체를 받아서 여러 데이터가 들어와도 해당 dto가 필드를 포함하고 있으면 문제가 되지 않는다.
