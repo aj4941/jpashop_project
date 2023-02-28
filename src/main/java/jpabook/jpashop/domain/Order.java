@@ -13,7 +13,7 @@ import java.util.List;
 @Getter @Setter
 public class Order {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
     private Long id;
 
@@ -25,7 +25,7 @@ public class Order {
     @JoinColumn(name = "delivery_id") // FK
     private Delivery delivery;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     private LocalDateTime orderDate;
@@ -54,11 +54,11 @@ public class Order {
     // 생성 메서드 (엔티티 내부에서 생성)
     public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
         Order order = new Order();
-        order.setMember(member);
-        order.setDelivery(delivery);
+        order.setMember(member); // order와 member 연결
+        order.setDelivery(delivery); // order와 delivery 연결
 
         for (OrderItem orderItem : orderItems) {
-            order.addOrderItem(orderItem);
+            order.addOrderItem(orderItem); // order와 orderItem 연결
         }
 
         order.setStatus(OrderStatus.ORDER);

@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter @Setter
 public class OrderItem {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_item_id")
     private Long id;
 
@@ -30,16 +30,16 @@ public class OrderItem {
     // 생성 메서드
     public static OrderItem createOrderItem(Item item, int orderPrice, int count) {
         OrderItem orderItem = new OrderItem();
-        orderItem.setItem(item);
+        orderItem.setItem(item); // 매핑
         orderItem.setOrderPrice(orderPrice);
         orderItem.setCount(count);
-        item.removeStock(count);
+        item.removeStock(count); // 더티 체킹 적용
         return orderItem;
     }
 
     // 주문 취소 로직
     public void cancel() {
-        item.addStock(count); // 재고 수량을 원복
+        item.addStock(count); // 재고 수량을 원복 (더티 체킹 적용)
     }
 
     // 전체 가격 반환

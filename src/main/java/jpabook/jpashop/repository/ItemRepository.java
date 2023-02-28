@@ -4,6 +4,7 @@ import jpabook.jpashop.domain.Item;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.LifecycleState;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
