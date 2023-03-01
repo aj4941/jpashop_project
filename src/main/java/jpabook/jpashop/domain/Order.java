@@ -19,7 +19,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY) // Many를 조회할 때 One이 지연로딩
     @JoinColumn(name = "member_id") // FK
-    private Member member;
+    private Member member; // = new ProxyMember(); (bytebuddy)
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // 전이
     @JoinColumn(name = "delivery_id") // FK

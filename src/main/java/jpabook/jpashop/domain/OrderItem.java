@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
@@ -20,6 +21,7 @@ public class OrderItem {
     @JoinColumn(name = "item_id") // FK
     private Item item;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id") // FK
     private Order order;
