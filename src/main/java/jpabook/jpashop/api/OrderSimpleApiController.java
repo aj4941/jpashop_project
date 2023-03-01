@@ -2,9 +2,11 @@ package jpabook.jpashop.api;
 
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
-import jpabook.jpashop.domain.OrderSearch;
+import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.repository.OrderSimpleQueryRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
     private final EntityManager em;
 
     @GetMapping("/api/v1/simple-orders")
@@ -58,21 +61,8 @@ public class OrderSimpleApiController {
         return result;
     }
 
-    // 페치 조인을 사용하면 쿼리가 1번 실행 (N + 1 문제 해결)
-    // ORDER 와 MEMBER를 조인 + 다시 DELIVERY 조인 -> 모두 SELECT 절에 필드들을 출력
-    // 1번의 쿼리로 모든 연관관계를 처리 (MEMBER 객체와 DELIVERY 객체가 ORDER 테이블에 묶여서 나옴)
-    @GetMapping("/api/v3/simple-orders")
-    public List<SimpleOrderDto> ordersV3() {
-        List<Order> orders = orderRepository.findAllWithMemberDelivery();
-        List<SimpleOrderDto> result = orders.stream()
-                .map(o -> new SimpleOrderDto(o))
-                .collect(Collectors.toList());
-
-        return result;
-    }
-
     @Data
-    static class SimpleOrderDto {
+    public class SimpleOrderDto {
         private Long orderId;
         private String name;
         private LocalDateTime orderDate;
@@ -86,5 +76,27 @@ public class OrderSimpleApiController {
             orderStatus = order.getStatus();
             address = order.getDelivery().getAddress(); // LAZY 초기화
         }
+    }
+
+    // 페치 조인을 사용하면 쿼리가 1번 실행 (N + 1 문제 해결)
+    // ORDER 와 MEMBER를 조인 + 다시 DELIVERY 조인 -> 모두 SELECT 절에 필드들을 출력
+    // 1번의 쿼리로 모든 연관관계를 처리 (MEMBER 객체와 DELIVERY 객체가 ORDER 테이블에 묶여서 나옴)
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+        List<SimpleOrderDto> result = orders.stream()
+                .map(o -> new SimpleOrderDto(o))
+                .collect(Collectors.toList());
+
+        return result;
+    }
+
+    // JPA에서 DTO로 바로 조회
+    // select 절에서 내가 원하는 것만 호출하는 형태
+    // API 스펙이 (원하는 dto 내용) repository에 들어가는 문제점이 존재
+    // -> dto 내용이 바뀌면 repository 수정이 불가피해짐
+    @GetMapping("/api/v4/simple-orders")
+    public List<OrderSimpleQueryDto> ordersV4() {
+        return orderSimpleQueryRepository.findOrderDtos();
     }
 }
