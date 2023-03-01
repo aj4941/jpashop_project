@@ -9,6 +9,7 @@ import jpabook.jpashop.repository.OrderSearch;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -50,6 +51,24 @@ public class OrderApiController {
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3() {
         List<Order> orders = orderRepository.findAllWithItem();
+        List<OrderDto> result = orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(Collectors.toList());
+
+        return result;
+    }
+
+    @GetMapping("/api/v3.1/orders")
+    public List<OrderDto> ordersV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
+                                        @RequestParam(value = "limit", defaultValue = "100") int limit) {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit); // ToOne 관계는 페치 조인으로 가져온다.
+        // default_batch_fetch_size: 100 : orders와 관련된 데이터를 100개만큼 당겨옴
+        // 1. 페치 조인 쿼리 실행
+        // 2. new OrderDto(o)에서 orderItems 호출 시에 where in (?, ?) 이 나오면서 한 번에 처리 (?의 개수가 size 개수)
+        // 3. item을 호출 시에 item_id in (?, ?, ?, ?) 이 나오면서 한 번에 처리
+        // -> where in 으로 size 만큼 엔티티의 id를 당겨오면서 orderItems와 item을 1개씩 얻어오는 것이 아니라 size 개수만큼 한 번에 얻을 수 있음
+        // if) size = 1이면 orderItem은 where in (?)로 쿼리 2번, item은 4번이 나가게 됨
+        // 쿼리 호출 횟수가 1 + N + M -> 1 + 1 + 1로 변화
         List<OrderDto> result = orders.stream()
                 .map(o -> new OrderDto(o))
                 .collect(Collectors.toList());

@@ -2,6 +2,7 @@ package jpabook.jpashop.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class Order {
     @JoinColumn(name = "delivery_id") // FK
     private Delivery delivery;
 
+//    @BatchSize(size = 1000)  // Many의 경우 여기에 작성 (One의 경우 클래스명 위에 적어야 함 Ex) Item)
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
