@@ -65,4 +65,14 @@ public class OrderRepository {
                         " join fetch o.member m" +
                         " join fetch o.delivery d", Order.class).getResultList();
     }
+
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select distinct o from Order o" + // distinct : 완전히 같은 값이 아니어도 order_id가 같은 값이면 중복 제거 (JPA 기능)
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" + // Order와 OrderItems를 조인 (Order_id 하나에 OrderItem 2개씩 매칭되므로 4개가 나옴)
+                        " join fetch oi.item i", Order.class)
+                .getResultList();
+    }
 }

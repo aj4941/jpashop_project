@@ -52,11 +52,10 @@ public class initDB {
             Book book2 = createBook("SPRING2 BOOK", 40000, 300);
             em.persist(book2);
 
-            Delivery delivery = createDelivery(member);
             OrderItem orderItem1 = OrderItem.createOrderItem(book1, 20000, 3);
             OrderItem orderItem2 = OrderItem.createOrderItem(book2, 40000, 4);
 
-            Order order = Order.createOrder(member, delivery, orderItem1, orderItem2);
+            Order order = Order.createOrder(member, createDelivery(member), orderItem1, orderItem2);
             em.persist(order);
         }
 
