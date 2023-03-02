@@ -29,11 +29,12 @@ public class OrderApiController {
     @GetMapping("/api/v1/orders")
     public List<Order> ordersV1() {
         List<Order> all = orderRepository.findAllByString(new OrderSearch());
+        // 1 + n
         for (Order order : all) {
-            order.getMember().getName(); // 강제 초기화
-            order.getDelivery().getAddress(); // 강제 초기화
-            List<OrderItem> orderItems = order.getOrderItems(); // ;;
-            orderItems.stream().forEach(o -> o.getItem().getName()); // ;;
+            order.getMember().getName();
+            order.getDelivery().getAddress();
+            List<OrderItem> orderItems = order.getOrderItems();
+            orderItems.stream().forEach(o -> o.getItem().getName());
         }
 
         return all;
@@ -82,6 +83,11 @@ public class OrderApiController {
     @GetMapping("/api/v4/orders")
     public List<OrderQueryDto> ordersV4() {
         return orderQueryRepository.findOrderQueryDtos();
+    }
+
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        return orderQueryRepository.findAllByDto_optimization();
     }
 
     @Getter

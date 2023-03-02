@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -13,11 +15,11 @@ public class OrderQueryRepository {
     private final EntityManager em;
 
     public List<OrderQueryDto> findOrderQueryDtos() {
-        //루트 조회(toOne 코드를 모두 한번에 조회)
+        // 루트 조회(toOne 코드를 모두 한번에 조회)
         List<OrderQueryDto> result = findOrders(); // query 1번 -> n개 dto 발생
-        //루프를 돌면서 컬렉션 추가(추가 쿼리 실행)
+        // 루프를 돌면서 컬렉션 추가(추가 쿼리 실행)
         result.forEach(o -> {
-            List<OrderItemQueryDto> orderItems = findOrderItems(o.getOrderId()); // n개 dto -> query n번
+            List<OrderItemQueryDto> orderItems = findOrderItems(o.getOrderId()); // n개 dto -> query n번 (n + 1 문제)
             o.setOrderItems(orderItems);
         });
         return result;
@@ -45,5 +47,33 @@ public class OrderQueryRepository {
                         OrderItemQueryDto.class)
                 .setParameter("orderId", orderId)
                 .getResultList();
+    }
+
+    public List<OrderQueryDto> findAllByDto_optimization() {
+
+        List<OrderQueryDto> result = findOrders(); // 쿼리 1번 발생
+
+        List<Long> orderIds = result.stream()
+                .map(o -> o.getOrderId())
+                .collect(Collectors.toList());
+
+        List<OrderItemQueryDto> orderItems = em.createQuery(
+                        "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+                                " from OrderItem oi" +
+                                " join oi.item i" +
+                                " where oi.order.id in :orderIds", OrderItemQueryDto.class)
+                .setParameter("orderIds", orderIds)
+                .getResultList(); // 쿼리 1번 발생
+
+        // 1 + 1 : 2번 발생
+
+        Map<Long, List<OrderItemQueryDto>> orderItemMap = orderItems.stream()
+                .collect(Collectors.groupingBy(OrderItemQueryDto::getOrderId));
+        // key : orderId, value : List<OrderItemQueryDto>
+
+        // 쿼리를 1번 날리고 map으로 다 가져온 다음에 메모리에서 값을 매칭
+        result.forEach(o -> o.setOrderItems(orderItemMap.get(o.getOrderId())));
+
+        return result;
     }
 }

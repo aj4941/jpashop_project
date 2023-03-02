@@ -56,6 +56,7 @@ public class OrderRepository {
         if (StringUtils.hasText(orderSearch.getMemberName())) {
             query = query.setParameter("name", orderSearch.getMemberName());
         }
+
         return query.getResultList();
     }
 
@@ -66,6 +67,7 @@ public class OrderRepository {
                         " join fetch o.delivery d", Order.class).getResultList();
     }
 
+    // 페치 조인은 지연로딩보다 우선이어서 먼저 엔티티를 조회함 (그냥 join 할 경우 지연로딩 때문에 조회가 되지는 않음)
     public List<Order> findAllWithItem() {
         return em.createQuery(
                 "select distinct o from Order o" + // distinct : 완전히 같은 값이 아니어도 order_id가 같은 값이면 중복 제거 (JPA 기능)

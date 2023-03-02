@@ -35,7 +35,7 @@ public class OrderItem {
         orderItem.setItem(item); // 매핑
         orderItem.setOrderPrice(orderPrice);
         orderItem.setCount(count);
-        item.removeStock(count); // 더티 체킹 적용
+        item.removeStock(count); // 더티 체킹 적용 (영속성 컨텍스트에 있으므로)
         return orderItem;
     }
 

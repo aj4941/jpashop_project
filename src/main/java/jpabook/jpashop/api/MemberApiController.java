@@ -28,12 +28,14 @@ public class MemberApiController {
     }
 
     // 엔티티 대신 dto를 만들어서 전송하면 원하는 값만 선택적으로 전송할 수 있음
+    // List<Member> -> List<MemberDto> -> Result<List<MemberDto>>
     @GetMapping("/api/v2/members")
     public Result memberV2() {
         List<Member> findMembers = memberService.findMembers();
-        List<MemberDto> collect = findMembers.stream()
-                .map(m -> new MemberDto(m.getName()))
+        List<MemberDto> collect = findMembers.stream() // Stream<Member>
+                .map(m -> new MemberDto(m.getName())) // MemberDto
                 .collect(Collectors.toList());// List<MemberDto>
+
         return new Result(collect);
     }
 
@@ -67,6 +69,20 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
+    @Data
+    static class CreateMemberRequest {
+        private String name;
+    }
+
+    @Data
+    static class CreateMemberResponse {
+        private Long id;
+
+        public CreateMemberResponse(Long id) {
+            this.id = id;
+        }
+    }
+
     @PutMapping("/api/v2/members/{id}")
     public UpdateMemberRespose updateMemberV2
             (@PathVariable("id") Long id,
@@ -89,20 +105,4 @@ public class MemberApiController {
         private Long id;
         private String name;
     }
-
-    @Data
-    static class CreateMemberRequest {
-        private String name;
-    }
-
-    @Data
-    static class CreateMemberResponse {
-        private Long id;
-
-        public CreateMemberResponse(Long id) {
-            this.id = id;
-        }
-    }
-
-
 }
