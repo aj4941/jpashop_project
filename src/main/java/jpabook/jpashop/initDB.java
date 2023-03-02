@@ -42,6 +42,8 @@ public class initDB {
             Book book2 = createBook("JPA2 BOOK", 20000, 100);
             em.persist(book2);
 
+            // 더티 체킹은 영속성 컨텍스트에서 관리되는 엔티티의 상태 변화를 감지하는 것
+            // book1, book2는 트랜잭션이 커밋되기 전에 상태 변경이 감지되어 더티 체킹 수행
             OrderItem orderItem1 = OrderItem.createOrderItem(book1, 10000, 1);
             OrderItem orderItem2 = OrderItem.createOrderItem(book2, 20000, 2);
 
