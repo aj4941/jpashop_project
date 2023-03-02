@@ -36,9 +36,7 @@ public class OrderSimpleApiController {
         // -> Module를 통해 프록시 객체인 member를 null로 출력하도록 설정할 수 있음 (Hibernate5Module 추가)
         for (Order order : all) {
             order.getMember().getName();
-            // order.getMember() 까지는 프록시 객체
-            // .getName() 하는 순간 Lazy 강제 초기화
-            order.getDelivery().getAddress(); // 마찬가지로 Lazy 강제 초기화
+            order.getDelivery().getAddress();
         }
         // 이 방법을 이용하면 Member, Delivery만 얻을 수 있음
         // (Hibernate5Module을 이용하여 원하는 값만 받음)
@@ -54,6 +52,9 @@ public class OrderSimpleApiController {
         // LAZY 로딩 2번씩 (2 * 2번 쿼리) -> N + 1 문제 발생
         // order -> member : N번
         // order -> delivery : N번
+        // order 1개 -> member 1번, delivery 1번씩 조회
+        // order n개 -> member n번, delivery n번씩 조회
+        // 총 나간 쿼리 개수 1 + n + n (n = 2) -> 5번
         List<SimpleOrderDto> result = orders.stream()
                 .map(o -> new SimpleOrderDto(o))
                 .collect(Collectors.toList());
